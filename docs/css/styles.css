@@ -1,0 +1,22 @@
+@charset "utf-8";
+
+#map {
+  height: 70vh;
+  margin: 0 auto;
+  border: 1px solid blue;
+}
+
+.marker-label {
+  color: white;
+  background: rgba(0, 0, 0, 0.7);
+  font-size: 14px;
+  text-align: center;
+  padding: 3px 8px;
+  border-radius: 3px;
+}
+
+footer {
+  border-top: 1px solid lightgray;
+  border-bottom: 1px solid lightgray;
+  background-color: whitesmoke;
+}
