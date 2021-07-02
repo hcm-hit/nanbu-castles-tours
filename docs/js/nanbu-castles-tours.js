@@ -267,6 +267,10 @@ function getAction() {
         case "/castles/show.html":
             action = mainCastlesShow;
             break;
+        case "/nanbu-castles-tours/map/":
+        case "/map/":
+                action = mainMap;
+                break;    
         default:
             break;
     }
@@ -281,12 +285,10 @@ function mainAbandonedCastles() {
     });
 }
 
-// /castles/index 地図→CSV→マーカー全部追加→一覧表
+// /castles/index CSV→一覧表
 function mainCastlesIndex() {
-    const map = initMap("map");
     const element = document.getElementById("castles");
     getCSV().then((castles) => {
-        addMarkers(map, castles);
         createCastlesTable(element, castles);
     });
 }
@@ -305,6 +307,14 @@ function mainCastlesShow() {
         addMarker(map, castle);
         createCastleTable(tableElement, castle);
         createCastleFigure(figureElement, castle);
+    });
+}
+
+// /map 地図→CSV→マーカー全部追加→一覧表
+function mainMap() {
+    const map = initMap("map");
+    getCSV().then((castles) => {
+        addMarkers(map, castles);
     });
 }
 
