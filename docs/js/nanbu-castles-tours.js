@@ -237,12 +237,12 @@ function addMarker(map, castle) {
         map: map
     });
 
-    google.maps.event.addListener(marker, "click", function () {
+    google.maps.event.addListener(marker, "click", (() => {
         const url = "../castles/show.html?id=" + id;
-        return function() {
+        return () => {
             location.href = url;
         };
-    }());
+    })());
 }
 
 function getId() {
