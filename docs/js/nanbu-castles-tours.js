@@ -1,4 +1,4 @@
-/*global google, MarkerWithLabel */
+/*global google, markerWithLabel */
 
 let north;
 let south;
@@ -226,7 +226,7 @@ function addMarker(map, castle) {
   
     refreshLatLngBounds(lat, lng);
   
-    const marker = new MarkerWithLabel({
+    const marker = new markerWithLabel.MarkerWithLabel({
         position: {
             lat: lat,
             lng: lng
