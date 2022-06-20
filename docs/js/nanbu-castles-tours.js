@@ -255,10 +255,6 @@ function getAction() {
     const pathname = document.location.pathname;
     let action;
     switch (pathname) {
-        case "/nanbu-castles-tours/abandoned-castles/":
-        case "/abandoned-castles/":
-            action = mainAbandonedCastles;
-            break;
         case "/nanbu-castles-tours/castles/":
         case "/castles/":
                 action = mainCastlesIndex;
@@ -275,14 +271,6 @@ function getAction() {
             break;
     }
     return action;
-}
-
-// /abandoned-castles CSV→一覧表(部分)
-function mainAbandonedCastles() {
-    const element = document.getElementById("abandoned-castles");
-    getCSV().then((castles) => {
-        createCastlesTable(element, castles, "abandoned");
-    });
 }
 
 // /castles/index CSV→一覧表
