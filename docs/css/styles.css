@@ -24,3 +24,7 @@ footer {
 .border-gray {
   border: 1px solid lightgray;
 }
+
+h1, h2 {
+  font-weight: bold;
+}
