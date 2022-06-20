@@ -20,3 +20,7 @@ footer {
   border-bottom: 1px solid lightgray;
   background-color: whitesmoke;
 }
+
+.border-gray {
+  border: 1px solid lightgray;
+}
