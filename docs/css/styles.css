@@ -28,3 +28,25 @@ footer {
 h1, h2 {
   font-weight: bold;
 }
+
+.text-end {
+  font-size: 8px;
+}
+
+@media (min-width: 321px) {
+  .text-end {
+    font-size: 12px;
+  }
+}
+
+@media (min-width: 400px) {
+  .text-end {
+    font-size: 14px;
+  }
+}
+
+@media (min-width: 576px) {
+  .text-end {
+    font-size: var(--bs-body-font-size);
+  }
+}
