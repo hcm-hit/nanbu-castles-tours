@@ -74,115 +74,6 @@ function processLine(line) {
     }
 }
 
-function escapeSpecialChars(str) {
-    return str
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-}
-
-function escapeHTML(strings, ...values) {
-    return strings.reduce((result, str, i) => {
-        const value = values[i - 1];
-        if (typeof value === "string") {
-            return result + escapeSpecialChars(value) + str;
-        } else {
-            return result + String(value) + str;
-        }
-    });
-}
-
-function createCastlesTable(element, castles, abandoned) {
-    const view1 = escapeHTML`
-<table class="table table-striped table-bordered">
-    <thead>
-        <tr><th>No</th><th>名称</th><th>ヨミ</th><th>所在地</th></tr>
-    </thead>
-    <tbody>
-`;
-    let html = view1;
-
-    for (let index of Object.keys(castles)) {
-        if (abandoned === "abandoned" && index > 48) {
-            break;
-        }
-        let castle = castles[index];
-        let view = escapeHTML`
-<tr>
-    <td>${castle["No."]}</td>
-    <td><a href="../castles/show.html?id=${castle["No."]}">${castle["城館"]["名称"]}</a></td>
-    <td>${castle["城館"]["ヨミ"]}</td>
-    <td>${castle["城館"]["所在地"]}</td>
-</tr>
-`;
-        html += view;
-    }
-
-    const view2 = escapeHTML`
-    </tbody>
-</table>
-`;
-    html += view2;
-
-    element.innerHTML = html;
-}
-
-function createCastleTable(element, castle) {
-    document.title = castle["城館"]["名称"] + ": 戦国南部氏の城めぐりアプリ";
-    document.querySelector("meta[property=\"og:title\"]").content = castle["城館"]["名称"] + ": 戦国南部氏の城めぐりアプリ";
-    document.querySelector("meta[property=\"og:url\"]").content += "?id=" + getId();
-    
-    const view1 = escapeHTML`
-<h1 id="page-name">${castle["城館"]["名称"]} <small class="h3">(${castle["城館"]["ヨミ"]})</small></h1>
-<div class="table-responsive">
-      <table class="table table-striped table-bordered">
-        <tbody>
-          <tr><th scope="row" style="width: 7em;">名称</th><td>${castle["城館"]["名称"]}</td></tr>
-          <tr><th scope="row">所在地</th><td>${castle["城館"]["所在地"]}</td></tr>
-          <tr><th scope="row">城主</th><td>${castle["城主"]}</td></tr>
-          <tr><th scope="row">年代</th><td>${castle["年代"]}</td></tr>
-          <tr><th scope="row">概要</th><td>${castle["概要"]}</td></tr>
-          <tr><th scope="row">現況</th><td>${castle["現況"]}</td></tr>
-          <tr><th scope="row">指定</th><td>${castle["指定"]}</td></tr>  
-        </tbody>
-      </table>
-    </div>
-`;
-
-    const view2 = escapeHTML`
-    <h2>諸城破却書上の記載</h2>
-    <div class="table-responsive">
-      <table class="table table-striped table-bordered">
-        <tbody>
-          <tr><th scope="row" style="width: 7em;">名称</th><td>${castle["破却書"]["名称"]}</td></tr>
-          <tr><th scope="row">郡名</th><td>${castle["破却書"]["郡名"]}</td></tr>
-          <tr><th scope="row">分類</th><td>${castle["破却書"]["分類"]}</td></tr>
-          <tr><th scope="row">存廃</th><td>${castle["破却書"]["存廃"]}</td></tr>
-          <tr><th scope="row">城主・代官</th><td>${castle["破却書"]["城主・代官"]}</td></tr>
-        </tbody>
-      </table>
-    </div>
-</div>
-`;
-
-    element.innerHTML = view1 + view2;
-}
-
-function createCastleFigure(element, castle) {
-    if (castle["写真"]) {
-        const view = escapeHTML`
-        <figure class="figure" style="margin: 0 auto;">
-            <img src="../images/${castle["写真"]}" class="figure-img img-fluid rounded" alt="${castle["城館"]["名称"]}">
-            <figcaption class="figure-caption text-center">${castle["城館"]["名称"]}</figcaption>
-        </figure>
-`;
-        element.innerHTML = view;
-        element.style.display = "block";
-    }
-}
-
 function initMap(id) {
     // マップの生成
     const map = new google.maps.Map(document.getElementById(id), {
@@ -238,7 +129,7 @@ function addMarker(map, castle) {
     });
 
     google.maps.event.addListener(marker, "click", (() => {
-        const url = "../castles/show.html?id=" + id;
+        const url = "../castles/" + id + ".html";
         return () => {
             location.href = url;
         };
@@ -246,39 +137,23 @@ function addMarker(map, castle) {
 }
 
 function getId() {
-    const params = new URLSearchParams(document.location.search.substring(1));
-    const id = parseInt(params.get("id"), 10);
+    const pathname = document.location.pathname;
+    // 「/」で区切った最後の要素がファイル名
+    const filename = pathname.split("/").pop();
+    // ファイル名の後ろの5文字「.html」を削除
+    const id = filename.slice(0, -5);
     return id;
 }
 
 function getAction() {
     const pathname = document.location.pathname;
     let action;
-    switch (pathname) {
-        case "/nanbu-castles-tours/castles/":
-        case "/castles/":
-                action = mainCastlesIndex;
-            break;
-        case "/nanbu-castles-tours/castles/show.html":
-        case "/castles/show.html":
-            action = mainCastlesShow;
-            break;
-        case "/nanbu-castles-tours/map/":
-        case "/map/":
-                action = mainMap;
-                break;    
-        default:
-            break;
+    if (pathname.startsWith("/nanbu-castles-tours/castles/") || pathname.startsWith("/castles/")) {
+        action = mainCastlesShow;
+    } else if (pathname === "/nanbu-castles-tours/map/" || pathname === "/map/") {
+        action = mainMap;
     }
     return action;
-}
-
-// /castles/index CSV→一覧表
-function mainCastlesIndex() {
-    const element = document.getElementById("castles");
-    getCSV().then((castles) => {
-        createCastlesTable(element, castles);
-    });
 }
 
 // /castles/show 地図→IDチェック→CSV→マーカー1つ追加→個別表
@@ -288,13 +163,9 @@ function mainCastlesShow() {
         location.href = "../castles/";
     }
     const map = initMap("map");
-    const tableElement = document.getElementById("castle");
-    const figureElement = document.getElementById("castle-figure");
     getCSV().then((castles) => {
         const castle = castles[id];
         addMarker(map, castle);
-        createCastleTable(tableElement, castle);
-        createCastleFigure(figureElement, castle);
     });
 }
 
